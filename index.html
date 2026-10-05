@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CuánticaVital • Trayectoria Interactiva de Computación Cuántica</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        quantum: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1, h2, h3, .font-heading { font-family: 'Space Grotesk', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(51, 65, 85, 0.8);
+        }
+        .quantum-glow {
+            box-shadow: 0 0 30px -5px rgba(16, 185, 129, 0.3);
+        }
+        @keyframes pulse-laser {
+            0% { transform: translateX(0); opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { transform: translateX(120px); opacity: 0.3; }
+        }
+        .laser-beam {
+            animation: pulse-laser 1.2s infinite linear;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchStage(0)">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center text-white shadow-lg quantum-glow">
+                    <i class="fa-solid fa-atom text-2xl animate-spin" style="animation-duration: 12s;"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-600 to-teal-400 bg-clip-text text-transparent font-heading">CuánticaVital</span>
+                    <span class="block text-xs text-slate-500 dark:text-slate-400 font-medium">Evolución Educativa Cuántica - Mgter. Ing. Gustavo Lazarte - 2026</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all shadow-sm">
+                    <i id="darkModeIcon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- Navigation & Progress Dashboard -->
+        <div class="mb-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div>
+                    <span id="stageBadge" class="text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full inline-block">Etapa 1 de 4</span>
+                    <h1 id="stageTitle" class="text-2xl sm:text-4xl font-extrabold mt-2 font-heading">Infancia: Intuición y Juego Lógico</h1>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="navigateStage(-1)" id="prevBtn" class="px-4 py-2.5 rounded-xl font-semibold text-sm bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 transition-all disabled:opacity-30">
+                        <i class="fa-solid fa-arrow-left mr-2"></i> Anterior
+                    </button>
+                    <button onclick="navigateStage(1)" id="nextBtn" class="px-5 py-2.5 rounded-xl font-semibold text-sm bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 transition-all">
+                        Siguiente Etapa <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stage Progress Tabs -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-200/60 dark:bg-slate-900/80 p-2 rounded-2xl backdrop-blur">
+                <button onclick="switchStage(0)" id="tab-0" class="tab-btn px-4 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-child"></i> 6-12 Años
+                </button>
+                <button onclick="switchStage(1)" id="tab-1" class="tab-btn px-4 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-graduation-cap"></i> 13-18 Años
+                </button>
+                <button onclick="switchStage(2)" id="tab-2" class="tab-btn px-4 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-laptop-code"></i> 19-35 Años
+                </button>
+                <button onclick="switchStage(3)" id="tab-3" class="tab-btn px-4 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-shield-halved"></i> 36+ Años
+                </button>
+            </div>
+        </div>
+
+        <!-- Dynamic Card View -->
+        <div id="stageCard" class="glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl transition-all duration-300">
+            <!-- Inyectado dinámicamente -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 dark:border-slate-800 py-6 mt-12 bg-white/40 dark:bg-slate-900/40">
+        <div class="max-w-7xl mx-auto px-4 text-center text-sm text-slate-500 dark:text-slate-400">
+            <p>CuánticaVital • Plataforma Educativa Interactiva de Computación Cuántica orientada a la divulgación y aprendizaje continuo.</p>
+        </div>
+    </footer>
+
+    <!-- Interactive Scripts & Data -->
+    <script>
+        const stages = [
+            {
+                id: 0,
+                age: "6 a 12 Años",
+                title: "Infancia: Intuición y Juego Lógico",
+                subtitle: "Despertar la curiosidad científica natural sin requerir fórmulas matemáticas, introduciendo la superposición y la óptica cuántica mediante experimentación visual interactiva.",
+                badgeClass: "bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300",
+                concepts: [
+                    { title: "Superposición Óptica", desc: "Un fotón puede tomar múltiples caminos simultáneamente hasta que un detector (observador) registra su posición exacta." },
+                    { title: "Indeterminometría", desc: "Las reglas del micromundo desafían el sentido común clásico, operando estrictamente mediante probabilidades." }
+                ],
+                resources: [
+                    { name: "Quantum Flytrap (Juego & Lab)", type: "Plataforma Web", url: "https://quantumgame.io/", desc: "Simulador óptico visual donde juegas con espejos, láseres y divisores de haz." },
+                    { name: "Quantum Odyssey", type: "Puzzles Visuales", url: "https://quantumodyssey.io/", desc: "Aprende lógica cuántica superando desafíos interactivos directamente en el navegador." }
+                ],
+                widgetTitle: "Laboratorio Visual Óptico: Superposición de Fotón",
+                widgetHtml: `
+                    <div class="bg-slate-900 text-slate-100 p-6 rounded-2xl border border-slate-800 shadow-inner">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+                            <div>
+                                <h4 class="font-bold text-emerald-400 text-sm"><i class="fa-solid fa-microscope mr-2"></i>Mesa Óptica Cuántica Virtual</h4>
+                                <p class="text-xs text-slate-400 mt-1">Dispara el láser y observa la división del fotón en superposición.</p>
+                            </div>
+                            <button onclick="triggerPhotonLab()" id="photonBtn" class="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-power-off"></i> Disparar Láser
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center bg-slate-950 p-6 rounded-xl border border-slate-800 text-center relative overflow-hidden">
+                            <div class="p-3 bg-slate-900 rounded-xl border border-slate-800">
+                                <i class="fa-solid fa-sun text-amber-400 text-2xl mb-1"></i>
+                                <span class="block text-xs font-bold text-slate-300">Emisor Láser</span>
+                            </div>
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="h-1 w-full bg-slate-800 relative my-4">
+                                    <div id="laserBeamLine" class="absolute inset-0 bg-emerald-400 opacity-0 transition-opacity"></div>
+                                </div>
+                                <span class="px-3 py-1 bg-slate-900 rounded-full text-xs font-mono text-emerald-400 border border-emerald-500/30">Divisor de Haz 50/50</span>
+                            </div>
+                            <div class="p-3 bg-slate-900 rounded-xl border border-slate-800">
+                                <div id="photonDetector" class="text-xl font-bold text-slate-500 transition-all">⚪ En Espera</div>
+                                <span class="block text-xs font-bold text-slate-400 mt-1">Detector Cuántico</span>
+                            </div>
+                        </div>
+                        <div id="photonStatusText" class="mt-4 text-xs font-mono text-slate-400 text-center">Estado del sistema óptico: Inactivo. Haz clic en disparar para iniciar.</div>
+                    </div>
+                `
+            },
+            {
+                id: 1,
+                age: "13 a 18 Años",
+                title: "Adolescencia: Conexión STEM y Circuitos Cuánticos",
+                subtitle: "Puente entre la física y la informática. Construye circuitos cuánticos reales combinando compuertas lógicas y observa cómo evoluciona el estado del Qubit.",
+                badgeClass: "bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300",
+                concepts: [
+                    { title: "Compuerta Hadamard (H)", desc: "Transforma un estado clásico definitivo (|0⟩) en una superposición equitativa de probabilidades." },
+                    { title: "Compuerta Pauli-X (NOT)", desc: "Invierte los estados cuánticos operando como un inversor lógico clásico adaptado al régimen cuántico." }
+                ],
+                resources: [
+                    { name: "IBM Quantum Composer", type: "Editor Visual", url: "https://quantum.cloud.ibm.com/", desc: "Diseña circuitos cuánticos profesionales arrastrando compuertas en la nube oficial de IBM." },
+                    { name: "IBM Quantum Learning", type: "Cursos y Módulos STEM", url: "https://quantum.cloud.ibm.com/learning/en/courses", desc: "Contenidos didácticos guiados para profesores y estudiantes de educación media." }
+                ],
+                widgetTitle: "Banco de Pruebas: Simulador Real de Circuitos Cuánticos",
+                widgetHtml: `
+                    <div class="bg-slate-900 text-slate-100 p-6 rounded-2xl border border-slate-800">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+                            <div>
+                                <h4 class="font-bold text-purple-400 text-sm"><i class="fa-solid fa-microchip mr-2"></i>Editor de Circuitos Qubit</h4>
+                                <p class="text-xs text-slate-400 mt-1">Aplica compuertas lógicas sobre la línea de tiempo del qubit:</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="applyGate('H')" class="px-3.5 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-xl shadow transition-all">+ Compuerta H</button>
+                                <button onclick="applyGate('X')" class="px-3.5 py-2 bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs rounded-xl shadow transition-all">+ Compuerta X</button>
+                                <button onclick="resetCircuit()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-xl transition-all"><i class="fa-solid fa-rotate-right"></i></button>
+                            </div>
+                        </div>
+                        <div class="bg-slate-950 p-6 rounded-xl border border-slate-800 mb-4">
+                            <div class="flex items-center gap-4 mb-4 font-mono text-xs text-slate-400 border-b border-slate-800 pb-3">
+                                <span class="w-20 font-bold text-purple-300">Qubit q_0</span>
+                                <div id="circuitSlots" class="flex items-center gap-2 flex-wrap">
+                                    <span class="px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-slate-400">|0⟩ (Inicial)</span>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                                <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                                    <span class="text-xs text-slate-400 block mb-1">Vector de Estado Actual</span>
+                                    <div id="currentStateVector" class="text-lg font-mono font-bold text-purple-400">|ψ⟩ = 1.00 |0⟩ + 0.00 |1⟩</div>
+                                </div>
+                                <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                                    <span class="text-xs text-slate-400 block mb-1">Probabilidad de Medición</span>
+                                    <div class="flex items-center gap-3 mt-2">
+                                        <div class="flex-grow bg-slate-950 rounded-full h-3 overflow-hidden border border-slate-800">
+                                            <div id="probBar0" class="bg-purple-500 h-full transition-all duration-300" style="width: 100%"></div>
+                                        </div>
+                                        <span id="probText" class="text-xs font-mono font-bold w-16 text-right">|0⟩: 100%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="circuitLog" class="text-xs font-mono text-slate-400 text-center">Estado del circuito: Inicializado en estado base |0⟩.</div>
+                    </div>
+                `
+            },
+            {
+                id: 2,
+                age: "19 a 35 Años",
+                title: "Universidad y Profesional: Inmersión Técnica y Cloud SDK",
+                subtitle: "Dominio riguroso del álgebra lineal, diseño de algoritmos de optimización (VQE) y ejecución de código real en procesadores cuánticos mediante Qiskit y Python.",
+                badgeClass: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
+                concepts: [
+                    { title: "Qiskit Python Framework", desc: "Librería de código abierto para trabajar con computadores cuánticos a nivel de pulsos y circuitos." },
+                    { title: "Simulación Hibrida Cloud", desc: "Envío de jobs asíncronos a backends simulados y QPU reales distribuidas en la nube." }
+                ],
+                resources: [
+                    { name: "Qiskit Textbook (IBM)", type: "Libro Oficial Abierto", url: "https://qiskit.org/textbook", desc: "La referencia mundial gratuita para aprender computación cuántica con Python." },
+                    { name: "PennyLane (Xanadu)", type: "ML Cuántico", url: "https://pennylane.ai/", desc: "Framework de referencia para machine learning y computación cuántica diferenciable." }
+                ],
+                widgetTitle: "Consola de Desarrollo Cloud & Ejecución Qiskit SDK",
+                widgetHtml: `
+                    <div class="bg-slate-900 text-slate-100 rounded-2xl border border-slate-800 overflow-hidden">
+                        <div class="bg-slate-950 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                                <span class="text-xs font-mono text-slate-400 ml-2">qiskit_job_runner.py</span>
+                            </div>
+                            <span class="text-xs px-2 py-1 bg-emerald-950 text-emerald-400 rounded border border-emerald-800/50 font-mono">Backend: qasm_simulator</span>
+                        </div>
+                        <div class="p-6 font-mono text-xs sm:text-sm">
+                            <pre class="text-emerald-300 overflow-x-auto leading-relaxed"><code>from qiskit import QuantumCircuit, transpile
+from qiskit_aer import AerSimulator
+
+# Configurar circuito de entrelazamiento de Bell
+qc = QuantumCircuit(2, 2)
+qc.h(0)
+qc.cx(0, 1)
+qc.measure([0,1], [0,1])
+
+print("Job enviado al servidor cloud de IBM Quantum...")</code></pre>
+                            <div id="sdkConsoleOutput" class="mt-4 p-4 bg-slate-950 rounded-xl border border-slate-800 text-slate-300 text-xs font-mono min-h-[90px] flex flex-col justify-center">
+                                <span class="text-slate-500">Haz clic en "Ejecutar Job en QPU Cloud" para compilar y obtener los histogramas de resultado...</span>
+                            </div>
+                        </div>
+                        <div class="bg-slate-950 p-4 border-t border-slate-800 flex items-center justify-between">
+                            <span id="sdkStatusBadge" class="text-xs text-slate-400 font-mono">Estado: Conectado a la API Cloud</span>
+                            <button onclick="runCloudSdkJob()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-sans font-bold text-xs rounded-xl shadow transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-play"></i> Ejecutar Job en QPU Cloud
+                            </button>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 3,
+                age: "36+ Años",
+                title: "Edad Adulta y Madurez: Estrategia, Ciberseguridad y Visión",
+                subtitle: "Gobernanza tecnológica, evaluación de riesgos frente a algoritmos de descifrado masivo (Shor) y adopción corporativa de estándares de Criptografía Post-Cuántica (PQC).",
+                badgeClass: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300",
+                concepts: [
+                    { title: "Amenaza del Algoritmo de Shor", desc: "Capacidad teórica de los ordenadores cuánticos escalados para factorizar números primos grandes y romper RSA/ECC." },
+                    { title: "Estándares PQC (NIST)", desc: "Nuevos algoritmos basados en redes reticulares matemáticamente seguros frente a ataques cuánticos y clásicos." }
+                ],
+                resources: [
+                    { name: "Conferencia Magistral (Ignacio Cirac - Max Planck)", type: "Vídeo Educativo Específico en YouTube", url: "https://www.youtube.com/watch?v=vCW4dnox9pw", desc: "Conferencia de referencia sobre el estado actual y futuro de la computación cuántica." },
+                    { name: "Informes Estratégicos Globales", type: "Foro Económico Mundial", url: "https://www.weforum.org/", desc: "Análisis ejecutivos sobre la disrupción cibernética de la tecnología cuántica." }
+                ],
+                widgetTitle: "Dashboard Ejecutivo: Auditoría de Ciberresistencia Post-Cuántica",
+                widgetHtml: `
+                    <div class="bg-slate-900 text-slate-100 p-6 rounded-2xl border border-slate-800">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+                            <div>
+                                <h4 class="font-bold text-amber-400 text-sm"><i class="fa-solid fa-shield-halved mr-2"></i>Simulador de Ciberresistencia Empresarial</h4>
+                                <p class="text-xs text-slate-400 mt-1">Evalúa y blinda la infraestructura corporativa frente a la llegada del hardware cuántico:</p>
+                            </div>
+                            <button onclick="executePqcMigration()" id="pqcBtn" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center gap-2">
+                                <i class="fa-solid fa-lock"></i> Activar Blindaje PQC
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold text-slate-400">Canal de Datos RSA 2048</span>
+                                    <span id="badgeRsa" class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-red-950 text-red-400 border border-red-800">Vulnerable a Shor</span>
+                                </div>
+                                <p class="text-xs text-slate-400">Algoritmo clásico expuesto a descifrado masivo por factorización cuántica rápida.</p>
+                                <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between text-xs font-mono">
+                                    <span class="text-slate-500">Tiempo estimado de rotura:</span>
+                                    <span id="timeRsa" class="text-red-400 font-bold">&lt; 48 Horas con QPU</span>
+                                </div>
+                            </div>
+                            <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold text-slate-400">Canal Reticular ML-KEM (PQC)</span>
+                                    <span id="badgePqc" class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">Inmune Cuántico</span>
+                                </div>
+                                <p class="text-xs text-slate-400">Estándar criptográfico post-cuántico certificado por el NIST estadounidense.</p>
+                                <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between text-xs font-mono">
+                                    <span class="text-slate-500">Nivel de Seguridad:</span>
+                                    <span id="statusPqcText" class="text-emerald-400 font-bold">Resiliente e Inquebrantable</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="pqcLogBox" class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono text-slate-400 text-center">Auditoría del sistema: Infraestructura en riesgo moderado por cifrado legacy.</div>
+                    </div>
+                `
+            }
+        ];
+
+        let currentStage = 0;
+
+        function renderStage(index) {
+            currentStage = index;
+            const s = stages[index];
+
+            // Actualizar pestañas superiores de edad
+            for (let i = 0; i < stages.length; i++) {
+                const btn = document.getElementById(`tab-${i}`);
+                if (i === index) {
+                    btn.className = "tab-btn px-4 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md";
+                } else {
+                    btn.className = "tab-btn px-4 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 text-slate-600 dark:text-slate-400 hover:bg-slate-300/50 dark:hover:bg-slate-800/50";
+                }
+            }
+
+            // Actualizar badge y título principal
+            const badgeEl = document.getElementById('stageBadge');
+            badgeEl.className = `text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full inline-block ${s.badgeClass}`;
+            badgeEl.innerText = `Etapa ${index + 1} de 4: ${s.age}`;
+            
+            document.getElementById('stageTitle').innerText = s.title;
+            
+            // Actualizar estado de los botones anterior/siguiente
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === stages.length - 1;
+
+            let conceptsHtml = s.concepts.map(c => `
+                <div class="p-4 rounded-2xl bg-slate-100 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                    <h3 class="font-bold text-emerald-600 dark:text-emerald-400 text-sm mb-1 font-heading"><i class="fa-solid fa-atom mr-2"></i>${c.title}</h3>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">${c.desc}</p>
+                </div>
+            `).join('');
+
+            let resourcesHtml = s.resources.map(r => `
+                <a href="${r.url}" target="_blank" class="p-4 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all group flex flex-col justify-between shadow-sm">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">${r.type}</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-slate-400 group-hover:text-emerald-500 transition-colors"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-800 dark:text-slate-100 text-sm group-hover:text-emerald-600 transition-colors mb-1 font-heading">${r.name}</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">${r.desc}</p>
+                    </div>
+                </a>
+            `).join('');
+
+            document.getElementById('stageCard').innerHTML = `
+                <div class="space-y-8">
+                    <div>
+                        <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">${s.subtitle}</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3">Conceptos Clave de la Etapa</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            ${conceptsHtml}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3">${s.widgetTitle}</h3>
+                        ${s.widgetHtml}
+                    </div>
+
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3">Recursos Libres y Gratuitos Recomendados</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            ${resourcesHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function switchStage(idx) { 
+            renderStage(idx); 
+        }
+
+        function navigateStage(dir) {
+            const n = currentStage + dir;
+            if (n >= 0 && n < stages.length) {
+                renderStage(n);
+            }
+        }
+
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const icon = document.getElementById('darkModeIcon');
+            icon.className = html.classList.contains('dark') ? "fa-solid fa-sun" : "fa-solid fa-moon";
+        }
+
+        // Lógica interactiva Etapa 1 (Fotón)
+        function triggerPhotonLab() {
+            const line = document.getElementById('laserBeamLine');
+            const detector = document.getElementById('photonDetector');
+            const txt = document.getElementById('photonStatusText');
+            
+            line.style.opacity = '1';
+            detector.innerHTML = "⚡ Colapsando...";
+            detector.className = "text-xl font-bold text-amber-400 animate-pulse";
+            txt.innerText = "Calculando estados de superposición óptica...";
+
+            setTimeout(() => {
+                line.style.opacity = '0.3';
+                const outcome = Math.random() > 0.5 ? "|1⟩ (Camino Superior)" : "|0⟩ (Camino Inferior)";
+                detector.innerHTML = outcome;
+                detector.className = "text-sm font-bold font-mono text-emerald-400";
+                txt.innerText = `¡Fotón medido con éxito! El estado superpuesto colapsó en el detector: ${outcome}`;
+            }, 900);
+        }
+
+        // Lógica interactiva Etapa 2 (Circuitos)
+        let circuitGates = [];
+        function applyGate(gate) {
+            if (circuitGates.length >= 4) {
+                circuitGates.shift();
+            }
+            circuitGates.push(gate);
+            updateCircuitView();
+        }
+        function resetCircuit() {
+            circuitGates = [];
+            updateCircuitView();
+        }
+        function updateCircuitView() {
+            const slots = document.getElementById('circuitSlots');
+            const vector = document.getElementById('currentStateVector');
+            const bar = document.getElementById('probBar0');
+            const probText = document.getElementById('probText');
+            const log = document.getElementById('circuitLog');
+
+            let html = `<span class="px-2.5 py-1 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-slate-400">|0⟩</span>`;
+            circuitGates.forEach(g => {
+                let color = g === 'H' ? 'bg-purple-950 text-purple-300 border-purple-700' : 'bg-teal-950 text-teal-300 border-teal-700';
+                html += `<span class="px-3 py-1 rounded-lg text-xs font-mono font-bold border ${color}">[ ${g} ]</span>`;
+            });
+            slots.innerHTML = html;
+
+            if (circuitGates.length === 0) {
+                vector.innerText = "|ψ⟩ = 1.00 |0⟩ + 0.00 |1⟩";
+                bar.style.width = "100%";
+                probText.innerText = "|0⟩: 100%";
+                log.innerText = "Estado del circuito: En estado base inicial |0⟩.";
+            } else {
+                const last = circuitGates[circuitGates.length - 1];
+                if (last === 'H') {
+                    vector.innerText = "|ψ⟩ = 0.71 |0⟩ + 0.71 |1⟩";
+                    bar.style.width = "50%";
+                    probText.innerText = "50% / 50%";
+                    log.innerText = "Compuerta Hadamard aplicada: Se generó superposición cuántica equitativa.";
+                } else {
+                    vector.innerText = "|ψ⟩ = 0.00 |0⟩ + 1.00 |1⟩";
+                    bar.style.width = "0%";
+                    probText.innerText = "|1⟩: 100%";
+                    log.innerText = "Compuerta Pauli-X aplicada: Inversión de estado completada (|1⟩).";
+                }
+            }
+        }
+
+        // Lógica interactiva Etapa 3 (Cloud SDK)
+        function runCloudSdkJob() {
+            const consoleBox = document.getElementById('sdkConsoleOutput');
+            const status = document.getElementById('sdkStatusBadge');
+            
+            status.innerText = "Estado: Compilando y ejecutando en QPU Cloud...";
+            consoleBox.innerHTML = `<span class="text-amber-400 animate-pulse">⚙️ Transpilando circuito para QPU superconductora...</span>`;
+
+            setTimeout(() => {
+                consoleBox.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="text-emerald-400">✓ Job ID: #qjob-8849-ae21</div>
+                        <div class="text-slate-300">✓ Shots ejecutados: 1024 iteraciones en simulador aer.</div>
+                        <div class="text-purple-300 font-bold mt-2">Histograma de resultados devuelto:</div>
+                        <div class="font-mono text-xs text-slate-300 mt-1">|00⟩: 508 counts (49.6%) &nbsp; |11⟩: 516 counts (50.4%)</div>
+                    </div>
+                `;
+                status.innerText = "Estado: Job completado con éxito (Resultados OK)";
+            }, 1200);
+        }
+
+        // Lógica interactiva Etapa 4 (PQC Migration)
+        function executePqcMigration() {
+            const badgeRsa = document.getElementById('badgeRsa');
+            const timeRsa = document.getElementById('timeRsa');
+            const statusPqc = document.getElementById('statusPqcText');
+            const logBox = document.getElementById('pqcLogBox');
+            const btn = document.getElementById('pqcBtn');
+
+            badgeRsa.className = "px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800";
+            badgeRsa.innerText = "Blindado con PQC";
+            timeRsa.className = "text-emerald-400 font-bold";
+            timeRsa.innerText = "Inmune a Algoritmo de Shor";
+            statusPqc.innerText = "Infraestructura Segura y Protegida";
+            logBox.innerHTML = "<span class='text-emerald-400'>✓ Migración completada: Canales corporativos actualizados a estándares reticulares NIST PQC.</span>";
+            btn.innerText = "Blindaje Activo ✓";
+            btn.className = "px-5 py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow transition-all";
+        }
+
+        window.onload = () => renderStage(0);
+    </script>
+</body>
+</html>
