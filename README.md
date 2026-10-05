@@ -17,7 +17,7 @@ Plataforma educativa web, libre y gratuita, diseñada para mostrar cómo puede e
 
 ### 🚀 Acceso en Directo
 Puedes probar la plataforma funcionando en línea a través de GitHub Pages:
-👉 https://github.com/glazarte/cuantica-vital
+👉https://glazarte.github.io/cuantica-vital/
 
 ---
 
